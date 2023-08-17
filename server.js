@@ -21,8 +21,10 @@ app.use(express.json());
 
 // MODEL
 const travelSchema = new mongoose.Schema({
-    name: String,   
-    location: String
+    location: String,   
+    landmark: String,
+    image: String,
+    dates: String
     
 });
 
