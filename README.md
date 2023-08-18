@@ -1,4 +1,4 @@
-# Group Project 
+# Travel Diary 
 **By:** Paul Bunda, Susie Gordon, Nicholas Smith
 
 </br>
@@ -10,11 +10,13 @@ description
 </br>
 
 ## Deployment
-
+https://groupproject-travel.onrender.com/
 </br>
 
 ## Technologies Used
-
+- Javscript
+- Express Framework
+- MongoDB connections
 </br>
 
 ## ERD
@@ -59,3 +61,6 @@ erDiagram
         string LogoutMessage
     }
 ```
+
+#### Notes for when we Return
+- 
