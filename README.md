@@ -11,8 +11,19 @@ Travelog is a travel diary site where users can view, post, edit, and delete pos
 </br>
 
 ## Technologies Used
+- Postman
+- Github
+- Javascript
 
-</br>
+## Backend Endpoints
+
+| Name | ENDPOINT | METHOD | PURPOSE |
+|------|----------|--------|---------|
+|INDEX| /travel | GET | return list of travel entries|
+|DESTROY| /travel/:id | DELETE | delete travel entry from database |
+|UPDATE| /travel/:id | PUT | receive info & update tavel entry in database |
+|CREATE| /travel | POST | receive info from new form & create new travel entry in database |
+|SHOW| /travel/:id | GET | render page with the travel entry|
 
 ## ERD
 
