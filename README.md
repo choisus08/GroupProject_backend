@@ -14,6 +14,7 @@ Travelog is a travel diary site where users can view, post, edit, and delete pos
 - Postman
 - Github
 - Javascript
+- Express framework
 
 ## Backend Endpoints
 
