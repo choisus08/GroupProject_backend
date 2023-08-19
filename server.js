@@ -42,6 +42,7 @@ app.get("/travel", async (req, res) => {
         res.status(400).json({ error })
     }
 })
+
 // DESTROY - DELETE - /travel/:id - delete a travel location
 app.delete("/travel/:id", async (req, res) => {
     try {
@@ -51,12 +52,27 @@ app.delete("/travel/:id", async (req, res) => {
         res.status(400).json({error})
     }
 })
+
+// UPDATE - PUT - /travel/:id - update a single travel location
+app.put("/travel/:id", async (req, res) => {
+    try {
+      // update the travel location
+      const travel = await Travel.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+      });
+      // send the updated travel as json
+      res.json(travel);
+    } catch (error) {
+      res.status(400).json({ error });
+    }
+});
+
 // CREATE - POST - /travel - create a new travel location
 app.post("/travel", async (req, res) => {
     try {
         // create the new travel location
         const travel = await Travel.create(req.body)
-        // send newly created cheese as JSON
+        // send newly created travel as JSON
         res.json(travel)
     }
     catch(error){
