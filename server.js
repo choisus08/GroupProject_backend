@@ -42,7 +42,15 @@ app.get("/travel", async (req, res) => {
         res.status(400).json({ error })
     }
 })
-
+// DESTROY - DELETE - /travel/:id - delete a travel location
+app.delete("/travel/:id", async (req, res) => {
+    try {
+        const travel = await Travel.findByIdAndDelete(req.params.id)
+        res.status(204).json(travel)
+    } catch(error){
+        res.status(400).json({error})
+    }
+})
 // CREATE - POST - /travel - create a new travel location
 app.post("/travel", async (req, res) => {
     try {
@@ -55,6 +63,9 @@ app.post("/travel", async (req, res) => {
         res.status(400).json({ error })
     }
 });
+
+
+
 
 // test route
 app.get('/', (req, res) => {
