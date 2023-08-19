@@ -25,7 +25,6 @@ const travelSchema = new mongoose.Schema({
     landmark: String,
     image: String,
     dates: String
-    
 });
 
 
