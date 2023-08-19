@@ -27,8 +27,34 @@ const travelSchema = new mongoose.Schema({
     dates: String
 });
 
-
+const Travel = mongoose.model("Travel", travelSchema)
 // ROUTES
+
+// INDEX - GET - /travel - gets all travel locations
+app.get("/travel", async (req, res) => {
+    try {
+        // fetch data and store it in variable: travel
+        const travel = await Travel.find({});
+        // send json
+        res.json(travel)
+    } catch (error) {
+        // send error as json
+        res.status(400).json({ error })
+    }
+})
+
+// CREATE - POST - /travel - create a new travel location
+app.post("/travel", async (req, res) => {
+    try {
+        // create the new travel location
+        const travel = await Travel.create(req.body)
+        // send newly created cheese as JSON
+        res.json(travel)
+    }
+    catch(error){
+        res.status(400).json({ error })
+    }
+});
 
 // test route
 app.get('/', (req, res) => {
