@@ -162,7 +162,20 @@ app.post("/login", async (req, res) => {
             throw new Error("Password does not match")
         }
         const token = jwt.sign({ username: user.username }, process.env.SECRET)
-        res.cookie("token", token)
+        res.cookie("token", token, {
+            // can only be accessed by server requests
+            httpOnly: true,
+            // path = where the cookie is valid
+            path: "/",
+            // domain = what domain the cookie is valid on
+            domain: "localhost",
+            // secure = only send cookie over https
+            secure: false,
+            // sameSite = only send cookie if the request is coming from the same origin
+            sameSite: "lax", // "strict" | "lax" | "none" (secure must be true)
+            // maxAge = how long the cookie is valid for in milliseconds
+            maxAge: 3600000, // 1 hour
+          });
         res.json(user)
     } catch (error) {
         res.status(400).json({error})
