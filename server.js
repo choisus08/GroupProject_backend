@@ -169,6 +169,16 @@ app.post("/login", async (req, res) => {
     }
 })
 
+// get /cookietest to test our cookie
+app.get("/cookietest", (req, res) => {
+    res.json(req.cookies);
+  })
+  
+// get /logout to clear our cookie
+app.get("/logout", (req, res) => {
+    res.clearCookie("token");
+    res.json({ message: "You have been logged out" });
+})
 
 // test route
 app.get('/', (req, res) => {
