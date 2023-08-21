@@ -6,6 +6,14 @@ const app = express();
 const mongoose = require('mongoose');
 const cors = require('cors');
 const morgan = require('morgan');
+// import cookie parser
+const cookieParser = require("cookie-parser");
+// import bcrypt  
+const bcrypt = require("bcryptjs")
+// import jwt
+const jwt = require("jsonwebtoken")
+
+
 
 // MONGOOSE CONNECTION
 mongoose.connect(DATABASE_URL);
@@ -13,13 +21,27 @@ mongoose.connection
     .on('open', () => console.log('You are now connected to mongoose'))
     .on('close', () => console.log('You are disconnected from mongoose'))
     .on('error', (error) => console.log(error))
+;
+
 
 // MIDDLEWARE
 app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
+// cookie parser for reading cookies (needed for auth)
+app.use(cookieParser());
 
-// MODEL
+
+// MODELS
+// USER model for logged in users
+
+const UserSchema = new mongoose.Schema({
+    username: { type: String, required: true, unique: true },
+    password: {type: String, required: true},
+  });
+  
+const User = mongoose.model("User", UserSchema);
+
 const travelSchema = new mongoose.Schema({
     location: String,   
     landmark: String,
@@ -91,6 +113,48 @@ app.delete("/travel/:id", async (req, res) => {
         res.status(400).json({error})
     }
 })
+
+// AUTH ROUTES
+
+// /signup - POST - receives a username and password and creates a user in the database
+app.post("/signup", async (req, res) => {
+    try {
+      // deconstruct the username and password from the body
+      let { username, password } = req.body;
+      // hash the password
+      password = await bcrypt.hash(password, await bcrypt.genSalt(10));
+      // create a new user in the database
+      const user = await User.create({ username, password });
+      // send the new user as json
+      res.json(user);
+    } catch(error){
+      res.status(400).json({error})
+    }
+})
+
+// /login - POST - receives a username & password, checks against database for match, returns user object with signed JWT cookie if match found
+app.post("/login", async (req, res) => {
+    try {
+        //deconstruct
+        let { username, password} = req.body
+        // search
+        const user = await User.findOne({ username })
+        // if no user found, error
+        if (!user) {
+            throw new Error("No user with that username found");
+        }
+        const passwordCheck = await bcrypt.compare(password, user.password);
+        if (!passwordCheck) {
+            throw new Error("Password does not match")
+        }
+        const token = jwt.sign({ username: user.username }, process.env.SECRET)
+        res.cookie("token", token)
+        res.json(user)
+    } catch (error) {
+        res.status(400).json({error})
+    }
+})
+
 
 // test route
 app.get('/', (req, res) => {
