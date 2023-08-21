@@ -31,6 +31,20 @@ app.use(express.json());
 // cookie parser for reading cookies (needed for auth)
 app.use(cookieParser());
 
+async function authCheck(req, res, next){
+    // check if the request has a cookie
+    if(req.cookies.token){
+      // if there is a cookie, try to decode it
+      const payload = await jwt.verify(req.cookies.token, process.env.SECRET)
+      // store the payload in the request
+      req.payload = payload;
+      // move on to the next piece of middleware
+      next();
+    } else {
+      // if there is no cookie, return an error
+      res.status(400).json({ error: "You are not authorized" });
+    }
+}
 
 // MODELS
 // USER model for logged in users
@@ -53,7 +67,7 @@ const Travel = mongoose.model("Travel", travelSchema)
 // ROUTES
 
 // INDEX - GET - /travel - gets all travel locations
-app.get("/travel", async (req, res) => {
+app.get("/travel", authCheck, async (req, res) => {
     try {
         // fetch data and store it in variable: travel
         const travel = await Travel.find({});
@@ -66,7 +80,7 @@ app.get("/travel", async (req, res) => {
 })
 
 // CREATE - POST - /travel - create a new travel location
-app.post("/travel", async (req, res) => {
+app.post("/travel", authCheck, async (req, res) => {
     try {
         // create the new travel location
         const travel = await Travel.create(req.body)
@@ -79,7 +93,7 @@ app.post("/travel", async (req, res) => {
 });
 
 // SHOW - GET - /travel/:id - get a single travel location
-app.get("/travel/:id", async (req, res) => {
+app.get("/travel/:id", authCheck, async (req, res) => {
     try {
       // get a travel location from the database
       const travel = await Travel.findById(req.params.id);
@@ -91,7 +105,7 @@ app.get("/travel/:id", async (req, res) => {
 });
 
 // UPDATE - PUT - /travel/:id - update a single travel location
-app.put("/travel/:id", async (req, res) => {
+app.put("/travel/:id", authCheck, async (req, res) => {
     try {
       // update the travel location
       const travel = await Travel.findByIdAndUpdate(req.params.id, req.body, {
@@ -105,7 +119,7 @@ app.put("/travel/:id", async (req, res) => {
 });
 
 // DESTROY - DELETE - /travel/:id - delete a travel location
-app.delete("/travel/:id", async (req, res) => {
+app.delete("/travel/:id", authCheck, async (req, res) => {
     try {
         const travel = await Travel.findByIdAndDelete(req.params.id)
         res.status(204).json(travel)
