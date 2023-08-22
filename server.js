@@ -74,7 +74,7 @@ const Travel = mongoose.model("Travel", travelSchema)
 app.get("/travel", authCheck, async (req, res) => {
     try {
         // fetch data and store it in variable: travel
-        const travel = await Travel.find({});
+        const travel = await Travel.find({username: req.payload.username});
         // send json
         res.json(travel)
     } catch (error) {
@@ -86,6 +86,7 @@ app.get("/travel", authCheck, async (req, res) => {
 // CREATE - POST - /travel - create a new travel location
 app.post("/travel", authCheck, async (req, res) => {
     try {
+      req.body.username = req.payload.username
         // create the new travel location
         const travel = await Travel.create(req.body)
         // send newly created travel as JSON
@@ -182,7 +183,7 @@ app.post("/login", async (req, res) => {
           });
         res.json(user)
     } catch (error) {
-        res.status(400).json({error})
+        res.status(400).json({error: error.message})
     }
 })
 
