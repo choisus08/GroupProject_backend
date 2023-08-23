@@ -36,7 +36,7 @@ if (Environment === "development"){
 if (Environment === "production"){
   app.use(
     cors({
-      origin: "https://xyz.onrender.com",
+      origin: "https://groupproject-backend.onrender.com/",
       credentials: true,
     })
   );
