@@ -12,8 +12,7 @@ const cookieParser = require("cookie-parser");
 const bcrypt = require("bcryptjs")
 // import jwt
 const jwt = require("jsonwebtoken")
-
-
+const Environment = process.env.NODE_ENV
 
 // MONGOOSE CONNECTION
 mongoose.connect(DATABASE_URL);
@@ -25,11 +24,24 @@ mongoose.connection
 
 
 // MIDDLEWARE
-app.use(cors({
-  origin: "http://localhost:3000",
-  credentials: true,
-  })
-);
+if (Environment === "development"){
+  app.use(
+    cors({
+      origin: "http://localhost:3000",
+      credentials: true,
+    })
+  );
+}
+
+if (Environment === "production"){
+  app.use(
+    cors({
+      origin: "https://xyz.onrender.com",
+      credentials: true,
+    })
+  );
+};
+
 app.use(morgan('dev'));
 app.use(express.json());
 // cookie parser for reading cookies (needed for auth)
@@ -168,20 +180,36 @@ app.post("/login", async (req, res) => {
             throw new Error("Password does not match")
         }
         const token = jwt.sign({ username: user.username }, process.env.SECRET)
-        res.cookie("token", token, {
-            // can only be accessed by server requests
-            httpOnly: true,
-            // path = where the cookie is valid
-            path: "/",
-            // domain = what domain the cookie is valid on
-            domain: "localhost",
-            // secure = only send cookie over https
-            secure: false,
-            // sameSite = only send cookie if the request is coming from the same origin
-            sameSite: "lax", // "strict" | "lax" | "none" (secure must be true)
-            // maxAge = how long the cookie is valid for in milliseconds
-            maxAge: 3600000, // 1 hour
-          });
+        if (process.env.NODE_ENV === "development"){
+          res.cookie("token", token, {
+          // can only be accessed by server requests
+          httpOnly: true,
+          // path = where the cookie is valid
+          path: "/",
+          // domain = what domain the cookie is valid on
+           domain: "localhost",
+          // secure = only send cookie over https
+          secure: false,
+          // sameSite = only send cookie if the request is coming from the same origin
+          sameSite: "lax", // "strict" | "lax" | "none" (secure must be true)
+          // maxAge = how long the cookie is valid for in milliseconds
+          maxAge: 3600000, // 1 hour
+        })};
+  
+        if (process.env.NODE_ENV === "production"){
+          res.cookie("token", token, {
+          // can only be accessed by server requests
+          httpOnly: true,
+          // path = where the cookie is valid
+          path: "/",
+          // secure = only send cookie over https
+          secure: true,
+          // sameSite = only send cookie if the request is coming from the same origin
+          sameSite: "none", // "strict" | "lax" | "none" (secure must be true)
+          // maxAge = how long the cookie is valid for in milliseconds
+          maxAge: 3600000, // 1 hour
+          })};
+
         res.json(user)
     } catch (error) {
         res.status(400).json({error: error.message})
