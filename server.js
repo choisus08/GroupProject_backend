@@ -64,7 +64,8 @@ const travelSchema = new mongoose.Schema({
     location: String,   
     landmark: String,
     image: String,
-    dates: String
+    dates: String,
+    username: String
 });
 
 const Travel = mongoose.model("Travel", travelSchema)
