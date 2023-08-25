@@ -197,7 +197,6 @@ app.post("/login", async (req, res) => {
         })};
   
         if (process.env.NODE_ENV === "production"){
-          console.log('productionEnv')
           res.cookie("token", token, {
           // can only be accessed by server requests
           httpOnly: true,
@@ -230,6 +229,7 @@ app.get("/logout", (req, res) => {
 
 // test route
 app.get('/', (req, res) => {
+  console.log(process.env.NODE_ENV)
     res.json({hello: 'world'})
 });
 
