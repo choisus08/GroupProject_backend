@@ -181,6 +181,7 @@ app.post("/login", async (req, res) => {
         }
         const token = jwt.sign({ username: user.username }, process.env.SECRET)
         if (process.env.NODE_ENV === "development"){
+          console.log('devCookie')
           res.cookie("token", token, {
           // can only be accessed by server requests
           httpOnly: true,
@@ -197,6 +198,7 @@ app.post("/login", async (req, res) => {
         })};
   
         if (process.env.NODE_ENV === "production"){
+          console.log('productionCookie')
           res.cookie("token", token, {
           // can only be accessed by server requests
           httpOnly: true,
